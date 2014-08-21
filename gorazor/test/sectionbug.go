@@ -12,6 +12,9 @@ func Sectionbug() string {
 
 	js := func() string {
 		var _buffer bytes.Buffer
+
+		_buffer.WriteString("this is plain")
+
 		for _, jsFile := range ctx.GetJS() {
 
 			_buffer.WriteString("<script src=\"")

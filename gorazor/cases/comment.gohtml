@@ -1,15 +1,12 @@
 @{
-import (
-"cases/layout/base"
-)
-
-var content string
-var err string
 }
 
+@* should be ignored *@
 
-@if _, ok := ctx.GetSecureCookie("userid"); ok {
-
-<!-- #section:basics/sidebar -->
-
+<p>hello </p>
+@{
+@*
+this is multiple line
+*@
+hello
 }

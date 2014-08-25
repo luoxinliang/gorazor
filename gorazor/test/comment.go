@@ -2,15 +2,13 @@ package cases
 
 import (
 	"bytes"
-	"cases/layout"
 )
 
-func Comment(content string, err string) string {
+func Comment() string {
 	var _buffer bytes.Buffer
-	if _, ok := ctx.GetSecureCookie("userid"); ok {
+	_buffer.WriteString("\n\n\n\n<p>hello </p>")
 
-		_buffer.WriteString("<!-- #section:basics/sidebar -->")
-	}
+	hello
 
-	return layout.Base(_buffer.String(), "", "")
+	return _buffer.String()
 }

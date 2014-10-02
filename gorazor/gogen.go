@@ -320,7 +320,7 @@ func (cp *Compiler) processLayout() {
 				}
 			}
 			if !found {
-				if arg == "ctx *web.Context" {
+				if strings.HasPrefix(arg, "ctx *") {
 					foot += ", " + `ctx`
 				} else {
 					foot += ", " + `""`

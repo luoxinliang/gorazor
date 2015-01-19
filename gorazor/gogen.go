@@ -395,6 +395,9 @@ func (cp *Compiler) visit() {
 	for _, p := range cp.params {
 		i := strings.Index(p, " ")
 		paramNames += ", " + p[0:i]
+		if strings.HasPrefix(p[i+1:], "...") {
+			paramNames += "..."
+		}
 	}
 	params := strings.Join(cp.params, ", ")
 	if len(cp.params) > 0 {

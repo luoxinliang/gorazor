@@ -43,16 +43,17 @@ type Part struct {
 }
 
 type Compiler struct {
-	ast      *Ast
-	buf      string //the final result
-	layout   string
-	firstBLK int
-	params   []string
-	parts    []Part
-	imports  map[string]bool
-	options  Option
-	dir      string
-	file     string
+	ast       *Ast
+	buf       string //the final result
+	hasLayout bool
+	layout    string
+	firstBLK  int
+	params    []string
+	parts     []Part
+	imports   map[string]bool
+	options   Option
+	dir       string
+	file      string
 }
 
 func (self *Compiler) addPart(part Part) {
@@ -140,6 +141,7 @@ func (cp *Compiler) visitFirstBLK(blk *Ast) {
 			}
 			parts := strings.SplitN(v, "/", -1)
 			if len(parts) >= 2 && parts[len(parts)-2] == "layout" {
+				cp.hasLayout = true
 				cp.layout = strings.Replace(v, "\"", "", -1)
 				dir := strings.Join(parts[0:len(parts)-1], "/") + "\""
 				cp.imports[dir] = true
@@ -290,9 +292,18 @@ func (cp *Compiler) processLayout() {
 	out := ""
 	sections := []string{}
 	scope := 0
+	needCloseBodyFunc := true
+
 	for _, l := range lines {
 		l = strings.TrimSpace(l)
 		if strings.HasPrefix(l, "section") && strings.HasSuffix(l, "{") {
+			if cp.hasLayout && needCloseBodyFunc {
+				out += `
+					return _buffer.String()
+				}
+				`
+				needCloseBodyFunc = false
+			}
 			name := l
 			name = strings.TrimSpace(name[7 : len(name)-1])
 			out += "\n " + name + " := func() string {\n"
@@ -315,16 +326,25 @@ func (cp *Compiler) processLayout() {
 			out += l + "\n"
 		}
 	}
+
+	if needCloseBodyFunc && cp.hasLayout {
+		out += `
+				}
+	`
+	}
+	needCloseBodyFunc = false
+
 	cp.buf = out
-	foot := "\nreturn "
-	if cp.layout != "" {
+	foot := "\n"
+	if cp.hasLayout {
 		parts := strings.SplitN(cp.layout, "/", -1)
 		base := Capitalize(parts[len(parts)-1])
-		foot += "layout." + base + "("
+		foot += "layout.Render" + base + "("
+		foot += "_buffer, body()"
 	}
-	foot += "_buffer.String()"
+
 	args := LayOutArgs(cp.layout)
-	if len(args) == 0 {
+	if len(args) == 0 && cp.hasLayout {
 		for _, sec := range sections {
 			foot += ", " + sec + "()"
 		}
@@ -349,7 +369,7 @@ func (cp *Compiler) processLayout() {
 			}
 		}
 	}
-	if cp.layout != "" {
+	if cp.hasLayout {
 		foot += ")"
 	}
 	foot += "\n}\n"
@@ -364,20 +384,37 @@ func (cp *Compiler) visit() {
 	fun := cp.file
 
 	cp.imports[`"bytes"`] = true
-	head := "package " + pack + "\n import (\n"
+	head := "package " + pack + "\nimport (\n"
 	for k, _ := range cp.imports {
 		head += k + "\n"
 	}
-	head += "\n)\n func " + fun + "("
-	for idx, p := range cp.params {
-		head += p
-		if idx != len(cp.params)-1 {
-			head += ", "
-		}
+	head += "\n)\nfunc Render" + fun + "(_buffer bytes.Buffer"
+
+	var paramNames string
+	for _, p := range cp.params {
+		i := strings.Index(p, " ")
+		paramNames += ", " + p[0:i]
 	}
-	head += ") string {\n var _buffer bytes.Buffer\n"
+	params := strings.Join(cp.params, ", ")
+	if len(cp.params) > 0 {
+		head += ", " + params
+	}
+
+	head += ") {\n"
+	if cp.hasLayout {
+		head += `body := func() string{
+					var _buffer bytes.Buffer
+			`
+	}
+
 	cp.buf = head + cp.buf
 	cp.processLayout()
+
+	cp.buf = cp.buf + "\nfunc " + fun + "(" + params + ") string {\n" +
+		`var _buffer bytes.Buffer
+		Render` + fun + `(_buffer` + paramNames + `)
+		return _buffer.String()
+}`
 }
 
 func run(path string, Options Option) (*Compiler, error) {

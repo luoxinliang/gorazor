@@ -7,8 +7,7 @@ import (
 	. "zfw/tplhelper"
 )
 
-func Scopebug(obj *models.Widget) string {
-	var _buffer bytes.Buffer
+func RenderScopebug(_buffer bytes.Buffer, obj *models.Widget) {
 
 	if 1 == 2 {
 	} else {
@@ -27,5 +26,10 @@ func Scopebug(obj *models.Widget) string {
 		}
 	}
 
+}
+
+func Scopebug(obj *models.Widget) string {
+	var _buffer bytes.Buffer
+	RenderScopebug(_buffer, obj)
 	return _buffer.String()
 }

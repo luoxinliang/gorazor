@@ -6,8 +6,7 @@ import (
 	. "kp/models"
 )
 
-func Msg(u *User) string {
-	var _buffer bytes.Buffer
+func RenderMsg(_buffer bytes.Buffer, u *User) {
 
 	getName := func(u *User) string {
 		return "(" + u.Name + ")"
@@ -24,5 +23,10 @@ func Msg(u *User) string {
 	_buffer.WriteString((u.Intro))
 	_buffer.WriteString("</div>\n</div>")
 
+}
+
+func Msg(u *User) string {
+	var _buffer bytes.Buffer
+	RenderMsg(_buffer, u)
 	return _buffer.String()
 }

@@ -8,8 +8,7 @@ import (
 	. "zfw/tplhelper"
 )
 
-func Scope(obj *models.Widget) string {
-	var _buffer bytes.Buffer
+func RenderScope(_buffer bytes.Buffer, obj *models.Widget) {
 
 	data, dmType := dm.GetData(obj.PlaceHolder)
 
@@ -84,5 +83,10 @@ func Scope(obj *models.Widget) string {
 		_buffer.WriteString("\n  </div>\n</div>")
 	}
 
+}
+
+func Scope(obj *models.Widget) string {
+	var _buffer bytes.Buffer
+	RenderScope(_buffer, obj)
 	return _buffer.String()
 }

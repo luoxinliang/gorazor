@@ -5,8 +5,7 @@ import (
 	"github.com/sipin/gorazor/gorazor"
 )
 
-func Badtag(w *gorazor.Widget) string {
-	var _buffer bytes.Buffer
+func RenderBadtag(_buffer bytes.Buffer, w *gorazor.Widget) {
 	if w.ErrorMsg != "" {
 
 		_buffer.WriteString("<div class=\"form-group has-error\">\n	<div class=\"alert alert-danger\">")
@@ -30,5 +29,10 @@ func Badtag(w *gorazor.Widget) string {
 	_buffer.WriteString(gorazor.HTMLEscape(w.Value))
 	_buffer.WriteString("\">\n</div>")
 
+}
+
+func Badtag(w *gorazor.Widget) string {
+	var _buffer bytes.Buffer
+	RenderBadtag(_buffer, w)
 	return _buffer.String()
 }

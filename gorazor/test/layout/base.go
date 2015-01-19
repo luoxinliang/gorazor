@@ -6,8 +6,7 @@ import (
 	"tpl/admin/helper"
 )
 
-func Base(body string, title string, js string) string {
-	var _buffer bytes.Buffer
+func RenderBase(_buffer bytes.Buffer, body string, title string, js string) {
 
 	companyName := "深圳思品科技有限公司"
 
@@ -23,5 +22,10 @@ func Base(body string, title string, js string) string {
 	_buffer.WriteString((js))
 	_buffer.WriteString("\n  </body>\n</html>")
 
+}
+
+func Base(body string, title string, js string) string {
+	var _buffer bytes.Buffer
+	RenderBase(_buffer, body, title, js)
 	return _buffer.String()
 }

@@ -4,8 +4,7 @@ import (
 	"bytes"
 )
 
-func Brace_bug() string {
-	var _buffer bytes.Buffer
+func RenderBrace_bug(_buffer bytes.Buffer) {
 
 	isActive := func(name string) {
 		if active == name {
@@ -17,5 +16,10 @@ func Brace_bug() string {
 		}
 	}
 
+}
+
+func Brace_bug() string {
+	var _buffer bytes.Buffer
+	RenderBrace_bug(_buffer)
 	return _buffer.String()
 }

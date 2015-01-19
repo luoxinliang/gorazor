@@ -5,11 +5,15 @@ import (
 	"github.com/sipin/gorazor/gorazor"
 )
 
-func Keyword() string {
-	var _buffer bytes.Buffer
+func RenderKeyword(_buffer bytes.Buffer) {
 	_buffer.WriteString("BLK(<span>rememberingsteve@apple.com ")
 	_buffer.WriteString(gorazor.HTMLEscape(username))
 	_buffer.WriteString("</span>)BLK")
 
+}
+
+func Keyword() string {
+	var _buffer bytes.Buffer
+	RenderKeyword(_buffer)
 	return _buffer.String()
 }

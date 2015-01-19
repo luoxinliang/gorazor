@@ -8,84 +8,88 @@ import (
 	"tpl/helper"
 )
 
-func Home(totalMessage int, u *User) string {
-	var _buffer bytes.Buffer
-	_buffer.WriteString((helper.Header()))
-	_buffer.WriteString((helper.Msg(u)))
-	for i := 0; i < 2; i++ {
-		if totalMessage > 0 {
-			if totalMessage == 1 {
+func RenderHome(_buffer bytes.Buffer, totalMessage int, u *User) {
+	body := func() string {
+		var _buffer bytes.Buffer
+		_buffer.WriteString((helper.Header()))
+		_buffer.WriteString((helper.Msg(u)))
+		for i := 0; i < 2; i++ {
+			if totalMessage > 0 {
+				if totalMessage == 1 {
 
-				_buffer.WriteString("<p>")
-				_buffer.WriteString(gorazor.HTMLEscape(u.Name))
-				_buffer.WriteString(" has 1 message</p>")
+					_buffer.WriteString("<p>")
+					_buffer.WriteString(gorazor.HTMLEscape(u.Name))
+					_buffer.WriteString(" has 1 message</p>")
 
+				} else {
+
+					_buffer.WriteString("<p>")
+					_buffer.WriteString(gorazor.HTMLEscape(u.Name))
+					_buffer.WriteString(" has ")
+					_buffer.WriteString(gorazor.HTMLEscape(gorazor.Itoa(totalMessage)))
+					_buffer.WriteString(" messages</p>")
+
+				}
 			} else {
 
 				_buffer.WriteString("<p>")
 				_buffer.WriteString(gorazor.HTMLEscape(u.Name))
-				_buffer.WriteString(" has ")
-				_buffer.WriteString(gorazor.HTMLEscape(gorazor.Itoa(totalMessage)))
-				_buffer.WriteString(" messages</p>")
+				_buffer.WriteString(" has no messages</p>")
 
 			}
-		} else {
+		}
+
+		for i := 0; i < 2; i++ {
+			if totalMessage > 0 {
+				if totalMessage == 1 {
+
+					_buffer.WriteString("<p>")
+					_buffer.WriteString(gorazor.HTMLEscape(u.Name))
+					_buffer.WriteString(" has 1 message</p>")
+
+				} else {
+
+					_buffer.WriteString("<p>")
+					_buffer.WriteString(gorazor.HTMLEscape(u.Name))
+					_buffer.WriteString(" has ")
+					_buffer.WriteString(gorazor.HTMLEscape(gorazor.Itoa(totalMessage)))
+					_buffer.WriteString(" messages</p>")
+
+				}
+			} else {
+
+				_buffer.WriteString("<p>")
+				_buffer.WriteString(gorazor.HTMLEscape(u.Name))
+				_buffer.WriteString(" has no messages</p>")
+
+			}
+		}
+
+		switch totalMessage {
+		case 1:
+
+			_buffer.WriteString("<p>")
+			_buffer.WriteString(gorazor.HTMLEscape(u.Name))
+			_buffer.WriteString(" has 1  message</p>")
+
+		case 2:
+
+			_buffer.WriteString("<p>")
+			_buffer.WriteString(gorazor.HTMLEscape(u.Name))
+			_buffer.WriteString(" has 2 messages</p>")
+
+		default:
 
 			_buffer.WriteString("<p>")
 			_buffer.WriteString(gorazor.HTMLEscape(u.Name))
 			_buffer.WriteString(" has no messages</p>")
 
 		}
+
+		_buffer.WriteString((helper.Footer()))
+
+		return _buffer.String()
 	}
-
-	for i := 0; i < 2; i++ {
-		if totalMessage > 0 {
-			if totalMessage == 1 {
-
-				_buffer.WriteString("<p>")
-				_buffer.WriteString(gorazor.HTMLEscape(u.Name))
-				_buffer.WriteString(" has 1 message</p>")
-
-			} else {
-
-				_buffer.WriteString("<p>")
-				_buffer.WriteString(gorazor.HTMLEscape(u.Name))
-				_buffer.WriteString(" has ")
-				_buffer.WriteString(gorazor.HTMLEscape(gorazor.Itoa(totalMessage)))
-				_buffer.WriteString(" messages</p>")
-
-			}
-		} else {
-
-			_buffer.WriteString("<p>")
-			_buffer.WriteString(gorazor.HTMLEscape(u.Name))
-			_buffer.WriteString(" has no messages</p>")
-
-		}
-	}
-
-	switch totalMessage {
-	case 1:
-
-		_buffer.WriteString("<p>")
-		_buffer.WriteString(gorazor.HTMLEscape(u.Name))
-		_buffer.WriteString(" has 1  message</p>")
-
-	case 2:
-
-		_buffer.WriteString("<p>")
-		_buffer.WriteString(gorazor.HTMLEscape(u.Name))
-		_buffer.WriteString(" has 2 messages</p>")
-
-	default:
-
-		_buffer.WriteString("<p>")
-		_buffer.WriteString(gorazor.HTMLEscape(u.Name))
-		_buffer.WriteString(" has no messages</p>")
-
-	}
-
-	_buffer.WriteString((helper.Footer()))
 
 	title := func() string {
 		var _buffer bytes.Buffer
@@ -103,5 +107,11 @@ func Home(totalMessage int, u *User) string {
 		return _buffer.String()
 	}
 
-	return layout.Base(_buffer.String(), title(), "")
+	layout.RenderBase(_buffer, body(), title(), "")
+}
+
+func Home(totalMessage int, u *User) string {
+	var _buffer bytes.Buffer
+	RenderHome(_buffer, totalMessage, u)
+	return _buffer.String()
 }

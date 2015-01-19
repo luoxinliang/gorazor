@@ -329,7 +329,8 @@ func (cp *Compiler) processLayout() {
 
 	if needCloseBodyFunc && cp.hasLayout {
 		out += `
-				}
+			return _buffer.String()
+		}
 	`
 	}
 	needCloseBodyFunc = false

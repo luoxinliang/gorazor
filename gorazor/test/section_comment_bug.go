@@ -4,8 +4,7 @@ import (
 	"bytes"
 )
 
-func Section_comment_bug() string {
-	var _buffer bytes.Buffer
+func RenderSection_comment_bug(_buffer bytes.Buffer) {
 	_buffer.WriteString("\n\n<a>\n    <!-- comment -->\n</a>")
 
 	side := func() string {
@@ -15,5 +14,10 @@ func Section_comment_bug() string {
 		return _buffer.String()
 	}
 
-	return _buffer.String(), side()
+}
+
+func Section_comment_bug() string {
+	var _buffer bytes.Buffer
+	RenderSection_comment_bug(_buffer)
+	return _buffer.String()
 }

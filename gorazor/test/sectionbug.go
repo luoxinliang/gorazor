@@ -7,8 +7,12 @@ import (
 	"tpl/admin/layout"
 )
 
-func Sectionbug() string {
-	var _buffer bytes.Buffer
+func RenderSectionbug(_buffer bytes.Buffer) {
+	body := func() string {
+		var _buffer bytes.Buffer
+
+		return _buffer.String()
+	}
 
 	js := func() string {
 		var _buffer bytes.Buffer
@@ -22,5 +26,11 @@ func Sectionbug() string {
 		return _buffer.String()
 	}
 
-	return layout.Base(_buffer.String(), js())
+	layout.RenderBase(_buffer, body(), js())
+}
+
+func Sectionbug() string {
+	var _buffer bytes.Buffer
+	RenderSectionbug(_buffer)
+	return _buffer.String()
 }

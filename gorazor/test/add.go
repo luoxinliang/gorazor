@@ -6,13 +6,17 @@ import (
 	"github.com/sipin/gorazor/gorazor"
 )
 
-func Add(content string, err string) string {
-	var _buffer bytes.Buffer
-	_buffer.WriteString("\n\n<link rel=\"stylesheet\" href=\"/css/bootstrap-datetimepicker.css\">\n\n<style>\n.row {\n	margin-top: 10px;\n}\n</style>\n\n<h2>日程登记</h2>\n\n<div class=\"container-fluid\">\n	<form method=\"POST\" action=\"\">\n	<div class=\"row\" >\n		<p class=\"bg-danger\">")
-	_buffer.WriteString(gorazor.HTMLEscape(err))
-	_buffer.WriteString("</p>\n	</div>\n\n	<div class=\"row\">\n	内容:\n	<input type='text' class=\"form-control\" name=\"content\" value=\"")
-	_buffer.WriteString(gorazor.HTMLEscape(content))
-	_buffer.WriteString("\"/>\n	</div>\n	\n	<div class=\"row\">\n	开始时间:\n	<input type='text' class=\"datetimepicker form-control\" name=\"startTime\"/>\n	</div>\n	\n	<div class=\"row\">\n	结束时间:\n	<input type='text' class=\"datetimepicker form-control\" name=\"endTime\"/>\n	</div>\n\n	<div class=\"row\">\n	日程指派:\n	<select name=\"appoint\">\n		<option>cheney</option>\n		<option>wuvist</option>\n	</select>\n	</div>\n	\n	<div class=\"row\">\n	<input style=\"float:right\" type=\"submit\" value=\"保存\" class=\"btn btn-primary\"/>\n	</div>\n	</form>\n</div>")
+func RenderAdd(_buffer bytes.Buffer, content string, err string) {
+	body := func() string {
+		var _buffer bytes.Buffer
+		_buffer.WriteString("\n\n<link rel=\"stylesheet\" href=\"/css/bootstrap-datetimepicker.css\">\n\n<style>\n.row {\n	margin-top: 10px;\n}\n</style>\n\n<h2>日程登记</h2>\n\n<div class=\"container-fluid\">\n	<form method=\"POST\" action=\"\">\n	<div class=\"row\" >\n		<p class=\"bg-danger\">")
+		_buffer.WriteString(gorazor.HTMLEscape(err))
+		_buffer.WriteString("</p>\n	</div>\n\n	<div class=\"row\">\n	内容:\n	<input type='text' class=\"form-control\" name=\"content\" value=\"")
+		_buffer.WriteString(gorazor.HTMLEscape(content))
+		_buffer.WriteString("\"/>\n	</div>\n	\n	<div class=\"row\">\n	开始时间:\n	<input type='text' class=\"datetimepicker form-control\" name=\"startTime\"/>\n	</div>\n	\n	<div class=\"row\">\n	结束时间:\n	<input type='text' class=\"datetimepicker form-control\" name=\"endTime\"/>\n	</div>\n\n	<div class=\"row\">\n	日程指派:\n	<select name=\"appoint\">\n		<option>cheney</option>\n		<option>wuvist</option>\n	</select>\n	</div>\n	\n	<div class=\"row\">\n	<input style=\"float:right\" type=\"submit\" value=\"保存\" class=\"btn btn-primary\"/>\n	</div>\n	</form>\n</div>")
+
+		return _buffer.String()
+	}
 
 	title := func() string {
 		var _buffer bytes.Buffer
@@ -34,5 +38,11 @@ func Add(content string, err string) string {
 		return _buffer.String()
 	}
 
-	return layout.Base(_buffer.String(), title(), js())
+	layout.RenderBase(_buffer, body(), title(), js())
+}
+
+func Add(content string, err string) string {
+	var _buffer bytes.Buffer
+	RenderAdd(_buffer, content, err)
+	return _buffer.String()
 }

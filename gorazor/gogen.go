@@ -296,7 +296,7 @@ func (cp *Compiler) processLayout() {
 		if strings.HasPrefix(l, "section") && strings.HasSuffix(l, "{") {
 			name := l
 			name = strings.TrimSpace(name[7 : len(name)-1])
-			out += "\n " + name + " := func() string {\n"
+			out += "\n " + name + " := func() []byte {\n"
 			out += "var _buffer bytes.Buffer\n"
 			scope = 1
 			sections = append(sections, name)
@@ -307,7 +307,7 @@ func (cp *Compiler) processLayout() {
 				scope--
 			}
 			if scope == 0 {
-				out += "return _buffer.String()\n}\n"
+				out += "return _buffer.Bytes()\n}\n"
 				scope = 0
 			} else {
 				out += l + "\n"
@@ -323,7 +323,7 @@ func (cp *Compiler) processLayout() {
 		base := Capitalize(parts[len(parts)-1])
 		foot += "layout." + base + "("
 	}
-	foot += "_buffer.String()"
+	foot += "_buffer.Bytes()"
 	args := LayoutArgs(cp.layout)
 	if len(args) == 0 {
 		for _, sec := range sections {
